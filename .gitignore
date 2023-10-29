@@ -4,6 +4,8 @@ __pycache__/
 *$py.class
 
 .ienv/
+docker-*
+database/
 
 # C extensions
 *.so
