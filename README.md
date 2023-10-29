@@ -17,6 +17,15 @@ You can install the required Python libraries using `pip`:
 pip install -r requirements.txt
 ```
 
+## Workflow
+
+Intent to is to run each script individually with human in the loop.
+
+1. Run 'sort_img.py' script to organize media from source by YYYY-MM-DD format
+2. Run 'remove_dsstore.py' script to remove the .DS_Store file from camera
+3. Run 'remove_dupes.py' script to remove the duplicate files within each sub folder given a directory.
+4. Run 'rsync' command to merge new media to master media directory, 'rsync -avh --progress --ignore-existing /source/folder/ /desitnation/folder'
+
 ## Usage
 
 To sort your media files, run the script as follows:
