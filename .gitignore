@@ -6,6 +6,7 @@ __pycache__/
 .ienv/
 docker-*
 database/
+librephotos-docker/
 
 # C extensions
 *.so

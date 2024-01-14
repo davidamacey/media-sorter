@@ -15,11 +15,11 @@ def remove_ds_store_files(directory):
         print(f"Directory '{directory}' does not exist.")
         return
 
-    ds_store_files = []
-
     # Use scandir() to directly list files in the directory
-    ds_store_files = [path.join(root, filename) for root, _, files in walk(directory) for filename in files if filename == '.DS_Store']
+    ds_store_files = [path.join(root, filename) for root, _, files in walk(directory) for filename in files if filename == '.DS_Store' or filename == '._.DS_Store']
 
+    print(f'Removing {len(ds_store_files)} .DS_Store files')
+    
     with concurrent.futures.ThreadPoolExecutor() as executor:
         results = list(executor.map(remove_ds_store_file, ds_store_files))
 

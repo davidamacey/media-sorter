@@ -6,6 +6,7 @@ from hashlib import md5
 import logging
 from exiftool import ExifToolHelper
 from datetime import datetime
+from tqdm import tqdm
 
 class MediaFileSorter:
     def __init__(self, source_dir, dest_dir, num_workers, log_file):
@@ -34,8 +35,8 @@ class MediaFileSorter:
         
         if output.get('EXIF:CreateDate'):
             date = output.get('EXIF:CreateDate')
-        elif output.get('QuickTime:CreateDate'):
-            date = output.get('QuickTime:CreateDate')
+        elif output.get('QuickTime:CreationDate'):
+            date = output.get('QuickTime:CreationDate')
             # if date is null:
             if date.split(' ')[0] == '0000:00:00':
                 date = output.get('File:FileModifyDate')
@@ -71,7 +72,7 @@ class MediaFileSorter:
                         dest_file = path.join(dest_folder, f"{base_name}_{counter}{ext}")
                         counter += 1
                     else:
-                        print(f"Skipping copy of {file} as it already exists with the same content.")
+                        # print(f"Skipping copy of {file} as it already exists with the same content.")
                         break
 
                 copy2(file, dest_file)
@@ -108,7 +109,10 @@ class MediaFileSorter:
 
         with ThreadPoolExecutor(max_workers=self.num_workers) as executor:
             media_files = [path.join(root, filename) for root, _, files in walk(self.source_dir) for filename in files]
-            executor.map(self.copy_file, media_files)
+            
+            # Using tqdm to wrap around the executor.map function to display a progress bar
+            for _ in tqdm(executor.map(self.copy_file, media_files), total=len(media_files)):
+                pass
 
         with open(self.log_file, 'w') as log:
             log.write(f"Total Files Copied: {self.total_files_copied}\n")
