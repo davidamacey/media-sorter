@@ -16,6 +16,9 @@ class DuplicateFileRemover:
 
     def hash_file(self, file_path):
         """Calculate the sha256 hash of a file using hashlib."""
+        
+        # TODO: Use faster hashing algoritm to speed up processing
+        
         hasher = sha256()
         with open(file_path, 'rb') as f:
             data = f.read()

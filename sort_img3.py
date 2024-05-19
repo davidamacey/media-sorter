@@ -10,18 +10,17 @@ from tqdm import tqdm
 from shutil import move
 
 class MediaFileSorter:
-    def __init__(self, source_dir, dest_dir, num_workers, log_file):
+    def __init__(self, source_dir, dest_dir, log_file):
         self.source_dir = source_dir
         self.dest_dir = dest_dir
-        self.num_workers = num_workers
         self.log_file = log_file
 
         self.total_files_copied = 0
         self.files_copied_by_type = {}
         
-        self.if_move = False
+        self.if_move = True
         
-        self.dry_run = True
+        self.dry_run = False
         
         self.no_date_folder = None
         self.error_folder = None
@@ -38,39 +37,36 @@ class MediaFileSorter:
         try:
             with ExifToolHelper() as et:
                 output = et.get_metadata(file)[0]
-        except:
+                # print(output)
+        except Exception as e:
+            print(f"Error reading metadata: {e}")
             return None
+
+        date_tags = [
+            'QuickTime:CreateDate',
+            'QuickTime:CreationDate',
+            'EXIF:CreateDate',
+            'EXIF:DateTimeOriginal',
+            # 'File:ModificationDate'
+            'File:FileModifyDate',
+            # 'File:FileAccessDate',
+            # 'File:FileInodeChangeDate'
+        ]
         
-        # Handle video files specifically
-        # if file.lower().endswith(('.mov', '.mp4', '.avi')):  # Add other video formats as needed
-        if 'QuickTime:CreationDate' in output:
-            date_str = output['QuickTime:CreationDate']
-            # Parse the date and time along with the timezone
-            try:
-                date = datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S%z').astimezone()
-            except ValueError:
-                date = None
-        elif'EXIF:CreateDate' in output:
-                date_str = output['EXIF:CreateDate']
+        for tag in date_tags:
+            if tag in output:
+                date_str = output[tag]
+
                 try:
-                    date = datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
+                    date = date_str[:10].replace(":", "-")
                 except ValueError:
-                    date = None
-        elif'EXIF:DateTimeOriginal' in output:
-                date_str = output['EXIF:DateTimeOriginal']
-                try:
-                    date = datetime.strptime(date_str, '%Y:%m:%d %H:%M:%S')
-                except ValueError:
-                    date = None
-        elif output.get('File:FileModifyDate'):
-            date = output.get('File:FileModifyDate')
-            date = datetime.strptime(date, '%Y:%m:%d %H:%M:%S%z').astimezone()
-        else:
-            date = None
-            
-        # Return the date or none
+                    continue
+                break
+
         if date:
-            return date.strftime('%Y-%m-%d %H:%M:%S')
+            # print(date)
+            # logging.info(f"File {file} moving to folder: {str(date)}")
+            return date
         else:
             return None
 
@@ -79,11 +75,10 @@ class MediaFileSorter:
             date_taken = self.get_media_date(file)
 
             if date_taken:
-                new_date = datetime.strptime(date_taken.split(' ')[0], "%Y-%m-%d")
-
-                date_folder = new_date.strftime("%Y-%m-%d")
+                date_folder = date_taken
                 dest_folder = path.join(self.dest_dir, date_folder)
-                makedirs(dest_folder, exist_ok=True)
+                if not self.dry_run:
+                    makedirs(dest_folder, exist_ok=True)
 
                 current_folder = path.dirname(file)
                 base_name, ext = path.splitext(path.basename(file))
@@ -105,6 +100,7 @@ class MediaFileSorter:
                         counter += 1
                     else:
                         # File already exists with the same content
+                        logging.info(f"File already exists at dest folder: {date_taken} {file}")
                         return
                 
                 if not self.dry_run:
@@ -153,6 +149,7 @@ class MediaFileSorter:
         logging.error(f"Error processing {file}: {str(error)}")
         
     def sort_media_files(self):
+        
         self.create_destination_folders()
         
         # List of common video file extensions (add or remove as needed)
@@ -163,9 +160,10 @@ class MediaFileSorter:
         #                    for filename in files
         #                    if path.splitext(filename)[1].lower() in video_extensions]
         
-        media_files = [path.join(root, filename) for root, _, files in walk(self.source_dir) for filename in files]
+        media_files = [path.join(root, filename) for root, _, files in walk(self.source_dir) for filename in files if not filename.startswith(".")]
         
         print(f'There are {len(media_files)} files to look through!')
+        # print(media_files)
 
         thread_map(self.copy_file, media_files)
 
@@ -179,12 +177,11 @@ def main():
     parser = ArgumentParser(description="Sort media files based on date taken.")
     parser.add_argument("source_dir", help="Source directory containing media files.")
     parser.add_argument("dest_dir", help="Destination directory for sorted files.")
-    parser.add_argument("num_threads", type=int, help="Number of threads for concurrent processing")
     parser.add_argument("log_file", help="Output log file")
 
     args = parser.parse_args()
 
-    sorter = MediaFileSorter(args.source_dir, args.dest_dir, args.num_threads, args.log_file)
+    sorter = MediaFileSorter(args.source_dir, args.dest_dir, args.log_file)
     sorter.sort_media_files()
 
 if __name__ == "__main__":
@@ -196,4 +193,5 @@ if __name__ == "__main__":
 # command python sort_img.py '/mnt/nas/unsorted_photos_to_import/DJI AIR Drone Dragon 13SEP20/' /mnt/nas/unsorted_photos_to_import/TEST_SORT_OUTPUT/ 45  /mnt/nas/unsorted_photos_to_import/test_sort_output-dji.txt
 # time python sort_img.py /mnt/nas/unsorted_photos_to_import/ /mnt/nas/TEST_SORT_OUTPUT/ 47 /mnt/nas/test_sort_output.txt
 
-# time python sort_img3.py /mnt/nas/imports_gopro/ /mnt/nas/TEST_SORT_FOLDER/ 47 ./test_sort_output.txt
+# time python sort_img3.py /mnt/nas/00_IMPORT_PICTURES_00/ /mnt/nas/Pictures/ ./test_sort_output_final_03.txt
+# time python sort_img3.py ./test/ ./test_output/ ./test_sort_output1.txt
