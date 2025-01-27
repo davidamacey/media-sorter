@@ -1,4 +1,4 @@
-from os import makedirs, path, walk, remove
+from os import makedirs, path, walk, remove, removedirs
 from shutil import copy2, copystat
 from tqdm.contrib.concurrent import thread_map
 from argparse import ArgumentParser
@@ -160,6 +160,24 @@ class MediaFileSorter:
         
         logging.error(f"Error processing {file}: {str(error)}")
         
+    def remove_empty_folders(self, dirName):
+        """
+        Get a list of empty directories in a directory tree
+        """
+
+        print(f'checking this dir: {dirName}')
+
+        # Iterate over the directory tree and check if directory is empty.
+        listOfEmptyDirs = [
+            dirpath
+            for (dirpath, dirnames, filenames) in walk(dirName)
+            if len(dirnames) == 0 and len(filenames) == 0
+        ]
+
+        for elem in listOfEmptyDirs:
+            print(f'empty directory, removing: {elem}')
+            removedirs(elem)
+            
     def sort_media_files(self):
         
         self.create_destination_folders()
@@ -184,6 +202,10 @@ class MediaFileSorter:
             for ext, count in self.files_copied_by_type.items():
                 log.write(f"Files with Extension {ext}: {count}\n")
             print(f"Media files sorted into '{self.dest_dir}'. Log written to '{self.log_file}'.")
+            
+    
+        # clean up input folder, removing any empty folders for next import
+        self.remove_empty_folders(self.source_dir)
 
 def main():
     parser = ArgumentParser(description="Sort media files based on date taken.")
@@ -207,3 +229,5 @@ if __name__ == "__main__":
 
 # time python sort_img3.py /mnt/nas/00_IMPORT_PICTURES_00/ /mnt/nas/Pictures/ ./test_sort_output_final_03.txt
 # time python sort_img3.py ./test/ ./test_output/ ./test_sort_output1.txt
+
+# time python sort_img.py /mnt/nas/00_IMPORT_PICTURES_00/ /mnt/nas/Pictures/ ./sort_2025-01-27.txt
