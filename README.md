@@ -146,30 +146,22 @@ media-sorter dedup ~/Pictures/
 
 The sorter checks these metadata sources in order:
 
-**Videos (MP4, MOV, M4V):**
-1. `QuickTime:CreationDate` (has timezone - correct local date)
-2. `QuickTime:CreateDate` (fallback, may be UTC)
+| Priority | File Types | Metadata Tag | Notes |
+|----------|------------|--------------|-------|
+| 1 | Videos (MP4, MOV, M4V) | `QuickTime:CreationDate` | Has timezone - correct local date |
+| 2 | Videos (MP4, MOV, M4V) | `QuickTime:CreateDate` | Fallback, may be UTC |
+| 3 | Photos (JPEG, PNG, HEIC, RAW) | `EXIF:DateTimeOriginal` | |
+| 4 | Photos (JPEG, PNG, HEIC, RAW) | `EXIF:CreateDate` | |
+| 5 | Audio (MP3) | `ID3:RecordingTime` | ID3v2.4 TDRC tag |
+| 6 | Audio (MP3) | `ID3:Year` | Year only |
+| 7 | Audio (WAV) | `RIFF:DateTimeOriginal` | IDIT chunk |
+| 8 | Audio (WAV) | `RIFF:DateCreated` | ICRD chunk |
+| 9 | All files | `File:FileModifyDate` | Universal fallback |
+| 10 | All files | Filename patterns | e.g., `IMG_20231225_143022.jpg` |
 
-**Photos (JPEG, PNG, HEIC, RAW):**
-3. `EXIF:DateTimeOriginal`
-4. `EXIF:CreateDate`
-
-**Audio (MP3):**
-5. `ID3:RecordingTime` (ID3v2.4)
-6. `ID3:Year` (year only)
-
-**Audio (WAV):**
-7. `RIFF:DateTimeOriginal`
-8. `RIFF:DateCreated`
-
-**Audio (M4A, AAC):**
-- Uses QuickTime tags (same as videos)
-
-**Universal Fallbacks:**
-9. `File:FileModifyDate`
-10. **Filename patterns** (e.g., `IMG_20231225_143022.jpg`, `VID_20231225.mp4`, `VN_20231225_143022.m4a`)
-
-For `.AAE` sidecar files, only `File:FileModifyDate` is used.
+**Notes:**
+- Audio (M4A, AAC) uses QuickTime tags (same as videos)
+- `.AAE` sidecar files only use `File:FileModifyDate`
 
 ## Duplicate Detection
 
