@@ -1,0 +1,81 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+Media File Sorter - A Python package for organizing photos, videos, and audio files based on EXIF/ID3 metadata creation dates. Designed for managing large media collections (tested with 18,000+ files, ~175GB).
+
+## Prerequisites
+
+- Python 3.11+
+- `exiftool` system package (`sudo apt install exiftool`)
+
+## Installation
+
+```bash
+pip install -e .
+```
+
+## Common Commands
+
+```bash
+# Sort media files by date - MOVES files by default
+media-sorter sort <source_dir> <dest_dir>
+
+# Advanced sorting options
+media-sorter sort <src> <dest> --format "%Y/%m"      # Custom folder format
+media-sorter sort <src> <dest> --day-begins 4        # 2am photos → previous day
+media-sorter sort <src> <dest> --from-date 2023-01-01 --to-date 2023-12-31
+media-sorter sort <src> <dest> --copy                # Copy instead of move
+media-sorter sort <src> <dest> --dry-run             # Preview only
+
+# Remove .DS_Store files
+media-sorter clean <directory>
+
+# Remove duplicate files (uses imohash)
+media-sorter dedup <directory> [--dry-run]
+```
+
+## Architecture
+
+### Package Structure (`src/media_sorter/`)
+
+- **cli.py**: CLI entry point with subcommands (`sort`, `clean`, `dedup`)
+- **sorter.py**: `MediaFileSorter` class - main sorting logic
+- **utils/exif.py**: EXIF date extraction + filename pattern fallback
+- **utils/duplicates.py**: `DuplicateFileRemover` class using `imohash`
+- **utils/dsstore.py**: Concurrent `.DS_Store` file removal
+
+### Date Extraction Priority (uses LOCAL time, not UTC)
+
+1. `QuickTime:CreationDate` (videos, M4A - has timezone, correct local date)
+2. `QuickTime:CreateDate` (videos, M4A - fallback, may be UTC)
+3. `EXIF:DateTimeOriginal` / `EXIF:CreateDate` (photos)
+4. `ID3:RecordingTime` / `ID3:Year` (MP3 audio)
+5. `RIFF:DateTimeOriginal` / `RIFF:DateCreated` (WAV audio)
+6. `File:FileModifyDate` (fallback, only option for .AAE files)
+7. **Filename patterns** (e.g., `IMG_20231225_143022.jpg`, `VN_20231225.m4a`)
+
+### Key Features
+
+- **Custom folder format**: `--format "%Y/%m/%d"` using strftime patterns
+- **Day-begins hour**: `--day-begins 4` for event photography (early AM → previous day)
+- **Date range filter**: `--from-date` / `--to-date` to process specific periods
+- **Filename fallback**: Extracts dates from `IMG_YYYYMMDD_HHMMSS` patterns
+- **Fast hashing**: `imohash` samples ~16KB instead of reading entire file
+- **Concurrent processing**: `thread_map` for parallel file operations
+
+### Key Behaviors
+
+- Sorting moves files by default (set `--copy` to keep originals)
+- Files without dates go to `00_no_date_found/`
+- Files that error go to `00_media_error/`
+- Duplicate filenames handled with `_1`, `_2` suffixes
+- Log files auto-generated: `sort_YYYY-MM-DD.log`, `dedup.log`
+
+### Folder Structure
+
+- `src/media_sorter/` - Main package code
+- `pyproject.toml` - Package configuration
+- `CHANGELOG.md` - Version history

@@ -1,117 +1,207 @@
 # Media File Sorter
 
-The Media File Sorter is a Python script that organizes media files (e.g., photos and videos) based on their creation date. It can be especially useful for managing large collections of media files that lack proper organization. The script can process multiple files concurrently to improve efficiency.
+[![PyPI version](https://badge.fury.io/py/media-sorter.svg)](https://badge.fury.io/py/media-sorter)
+[![Python Version](https://img.shields.io/pypi/pyversions/media-sorter.svg)](https://pypi.org/project/media-sorter/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Using this script, speed depends on hardware.  Using 24 cores and a local NAS, processing 18000 photos and videos totalling about 175 GB completed in about 8 minutes.
+Organize photos, videos, and audio recordings into date-based folders using EXIF/QuickTime/ID3 metadata. Designed for managing large media collections efficiently using concurrent processing.
 
-## Prerequisites
+**Performance:** Using 24 cores with a local NAS, 18,000 files (~175 GB) processed in about 8 minutes.
 
-Before using the script, ensure that you have the following dependencies installed:
+## Why This Package?
 
-- Python 3.11
-- The `exiftool` library
+I created this out of my own need to organize media from GoPros, Canon cameras, and iPhones into a `YYYY-MM-DD` folder structure—the same format used by legacy photo organization apps from Canon and others. This structure allows for quick storage by day and handles multiple files and naming conventions cleanly.
 
-You can install the required Python libraries using `pip`:
+When I couldn't find an existing package that did this well, I built my own. It started as a macOS Automator macro and evolved into this pip package as requirements grew: better video support, audio recordings, configurable date formats, day-start boundaries for event photography, and date range filtering.
 
-```bash
-pip install -r requirements.txt
-```
-### Download iPhone Photos to NAS
+**Philosophy:** This package is intentionally lean. It serves one function—sorting media by date—and does it well and quickly. No feature creep.
 
-Purpose is to copy files from iPhone device directly to the local NAS file storage
-
-## Connect iPhone
-
-Connect iPhone via USB connection and login via Ubuntu
-
-1. Turn off WiFi and Bluetooth, turn on Personal Hotspot
-2. Navigate to the network section of Files.
-3. Remove the `:3/` from the address to connect to iPhone system.  
-
-## Find Files to Copy
-
-Options:
-1. Manually go through iPhone DCIM folder and NAS Picture files and find latest file by date and select items to copy.
-2. Use a script (to be created) to find the latest file in NAS to select newer files on iPhone.
-
-Copy files to an import folder on the NAS:
-
-Select the DCIM folder and select the folders you would like to copy, then drop and drop to copy.
-
-## Workflow
-
-Intent to is to run each script individually with human in the loop.
-
-1. Run 'sort_img.py' script to organize media from source by YYYY-MM-DD format
-2. Run 'remove_dsstore.py' script to remove the .DS_Store file from camera
-3. Run 'remove_dupes.py' script to remove the duplicate files within each sub folder given a directory.
-4. Run 'rsync' command to merge new media to master media directory, 'rsync -avh --progress --ignore-existing /source/folder/ /desitnation/folder'
-
-## Usage - Sorting by YYYY-MM-DD
-
-To sort your media files, run the script as follows:
-
-Using the year month day sorting method, run the script: `sort_img3.py` to move the files accordingly.
-
-**IMPORTANT NOTE:** This will by default move files and remove from source during copy process.  Reduces duplicate files and consolidates to single photo directory.
-
-Run Script:
-```bash
-time python sort_img.py /mnt/nas/import_pictures/ /mnt/nas/Pictures/ ./iphone_transfer_<date>.txt
-```
-
-- `source_dir`: The source directory containing your unsorted media files.
-- `dest_dir`: The destination directory where the sorted files will be placed.
-- `log_file`: The output log file to record the sorting process and statistics.
-
-## Removing `.DS_Store` Files
-
-### Description
-
-The `.DS_Store` file remover is a Python script designed to remove all `.DS_Store` files from a directory. These files are commonly created on macOS systems and can clutter your directories when transferred to non-macOS systems.
-
-### Usage
-
-To remove `.DS_Store` files, run the script as follows:
-
-```bash
-python remove_ds_store.py directory
-```
-
-- `directory`: The directory in which you want to remove `.DS_Store` files.
-
-## Removing Duplicate Files
-
-### Description
-
-The Duplicate File Remover is a Python script designed to find and remove duplicate files within a directory. It uses the SHA-256 hash of files to identify duplicates and provides the option to perform a dry run, allowing you to see what would be removed without actually deleting files.
-
-Use Case: Folders with duplicate files, but with different file names such as IMG_0001.JPG and IMG_0001-1.JPG.  Checks for duplicate hash, if so removes file.
+## Installation
 
 ### Prerequisites
 
-Before using the script, ensure that you have the following dependencies installed:
-
-- Python 3.11
-
-### Usage
-
-To remove duplicate files, run the script as follows:
+- Python 3.11+
+- `exiftool` system package
 
 ```bash
-python remove_dupes.py directory [--dry-run]
+# Install exiftool (Ubuntu/Debian)
+sudo apt install exiftool
+
+# Install exiftool (macOS)
+brew install exiftool
+
+# Install exiftool (Windows via Chocolatey)
+choco install exiftool
+
+# Or via Scoop
+scoop install exiftool
 ```
 
-- `directory`: The directory in which you want to find and remove duplicate files.
-- `--dry-run` (optional): Print what would be removed without deleting files. Use this flag for a trial run.
-
-
-## Synchronizing Folders
-
-### Description
-
-The folder synchronization via CLI that uses the `rsync` command to synchronize files from a source folder to a destination folder. It can be used to keep two directories in sync efficiently. Please make sure you have `rsync` installed on your system.
+### Install Package
 
 ```bash
-rsync -avh --progress --ignore-existing /source/folder/ /desitnation/folder'
+# Install from PyPI
+pip install media-sorter
+
+# Or clone and install in development mode
+git clone <repo-url>
+cd organize_photos
+pip install -e .
 ```
+
+## Usage
+
+After installation, the `media-sorter` command is available with three subcommands:
+
+### Sort Media Files
+
+Organize media into date-based folders by reading EXIF metadata:
+
+```bash
+# Basic usage - sort and MOVE files (default)
+media-sorter sort /path/to/unsorted/ /path/to/sorted/
+
+# Copy instead of move (keeps originals)
+media-sorter sort /path/to/unsorted/ /path/to/sorted/ --copy
+
+# Dry run - preview without changes
+media-sorter sort /path/to/unsorted/ /path/to/sorted/ --dry-run
+```
+
+**Advanced options:**
+
+```bash
+# Custom folder format (default: %Y-%m-%d)
+media-sorter sort /source/ /dest/ --format "%Y/%m"        # 2023/12/
+media-sorter sort /source/ /dest/ --format "%Y/%B"        # 2023/December/
+media-sorter sort /source/ /dest/ --format "%Y-%m-%d"     # 2023-12-25 (default)
+
+# Day begins at 4am (2am photos go to previous day - useful for events)
+media-sorter sort /source/ /dest/ --day-begins 4
+
+# Filter by date range
+media-sorter sort /source/ /dest/ --from-date 2023-01-01 --to-date 2023-12-31
+```
+
+**Default behavior:**
+- Moves files (removes from source after successful transfer)
+- Creates `00_no_date_found/` for files without date metadata
+- Creates `00_media_error/` for files that fail processing
+- Falls back to filename date patterns (e.g., `IMG_20231225_143022.jpg`)
+- Auto-generates log file: `sort_YYYY-MM-DD.log`
+- Removes empty source folders after sorting
+
+### Remove Duplicate Files
+
+Find and remove duplicates within each subdirectory using fast `imohash`:
+
+```bash
+# Remove duplicates (keeps file with shortest name)
+media-sorter dedup /path/to/sorted/
+
+# Dry run - see what would be removed
+media-sorter dedup /path/to/sorted/ --dry-run
+```
+
+### Clean .DS_Store Files
+
+Remove macOS `.DS_Store` files from a directory tree:
+
+```bash
+media-sorter clean /path/to/directory/
+```
+
+## Workflow
+
+Typical workflow for importing photos from iPhone or camera:
+
+```bash
+# 1. Sort imported media by date
+media-sorter sort ~/import/ ~/Pictures/
+
+# 2. Clean up macOS artifacts
+media-sorter clean ~/Pictures/
+
+# 3. Remove any duplicates within date folders
+media-sorter dedup ~/Pictures/
+```
+
+## iPhone Import Instructions
+
+### Connect iPhone to Linux
+
+1. Connect iPhone via USB
+2. Turn off WiFi and Bluetooth, turn on Personal Hotspot
+3. In Files app, navigate to Network section
+4. Remove the `:3/` from the address to connect to iPhone system
+
+### Copy Files
+
+1. Navigate to iPhone DCIM folder
+2. Select folders to copy
+3. Drag and drop to your import folder (e.g., `~/import/`)
+4. Run the sort workflow above
+
+## Date Extraction Priority
+
+The sorter checks these metadata sources in order:
+
+**Videos (MP4, MOV, M4V):**
+1. `QuickTime:CreationDate` (has timezone - correct local date)
+2. `QuickTime:CreateDate` (fallback, may be UTC)
+
+**Photos (JPEG, PNG, HEIC, RAW):**
+3. `EXIF:DateTimeOriginal`
+4. `EXIF:CreateDate`
+
+**Audio (MP3):**
+5. `ID3:RecordingTime` (ID3v2.4)
+6. `ID3:Year` (year only)
+
+**Audio (WAV):**
+7. `RIFF:DateTimeOriginal`
+8. `RIFF:DateCreated`
+
+**Audio (M4A, AAC):**
+- Uses QuickTime tags (same as videos)
+
+**Universal Fallbacks:**
+9. `File:FileModifyDate`
+10. **Filename patterns** (e.g., `IMG_20231225_143022.jpg`, `VID_20231225.mp4`, `VN_20231225_143022.m4a`)
+
+For `.AAE` sidecar files, only `File:FileModifyDate` is used.
+
+## Duplicate Detection
+
+Duplicates are detected using [imohash](https://pypi.org/project/imohash/), a fast hashing algorithm optimized for large files. Instead of reading entire files, imohash samples ~16KB from the beginning, middle, and end of files along with the file size.
+
+**Benefits:**
+- Extremely fast for large media files (videos, RAW photos)
+- Suitable for detecting true duplicates (same file copied multiple times)
+
+**Limitations:**
+- May produce false positives for files that differ only in the middle sections (rare for media)
+- Not suitable for detecting near-duplicates or edited versions of the same photo
+- Files must be exactly the same size and have identical sampled sections to match
+
+For most photo/video organization workflows where duplicates are exact copies, imohash provides an excellent speed/accuracy tradeoff.
+
+## Project Structure
+
+```
+media-sorter/
+├── src/media_sorter/     # Main package
+│   ├── cli.py            # CLI entry point
+│   ├── sorter.py         # MediaFileSorter class
+│   └── utils/            # Utility modules
+│       ├── dsstore.py    # DS_Store removal
+│       ├── duplicates.py # Duplicate detection (imohash)
+│       └── exif.py       # EXIF/ID3/RIFF date extraction
+├── pyproject.toml        # Package configuration
+├── CHANGELOG.md          # Version history
+└── README.md             # This file
+```
+
+## License
+
+MIT

@@ -3,13 +3,26 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-*.txt
+# Log files
+logs/
+*.log
 
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Project-specific
 .ienv/
 .senv/
 docker-*
 database/
 librephotos-docker/
+
+# Build artifacts
+*.egg-info/
+build/
+dist/
 
 # C extensions
 *.so
@@ -153,6 +166,9 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Ruff
+.ruff_cache/
 
 # pytype static type analyzer
 .pytype/
