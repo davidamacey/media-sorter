@@ -1,6 +1,6 @@
 # EXIF Sorter
 
-[![PyPI version](https://badge.fury.io/py/exif-sorter.svg)](https://badge.fury.io/py/exif-sorter)
+[![PyPI version](https://img.shields.io/pypi/v/exif-sorter.svg)](https://pypi.org/project/exif-sorter/)
 [![Python Version](https://img.shields.io/pypi/pyversions/exif-sorter.svg)](https://pypi.org/project/exif-sorter/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
