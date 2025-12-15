@@ -1,4 +1,4 @@
-"""Shared pytest fixtures for media-sorter tests."""
+"""Shared pytest fixtures for exif-sorter tests."""
 
 from __future__ import annotations
 
@@ -119,9 +119,9 @@ def mock_exiftool_metadata(monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
         def get_metadata(self, file_path: str) -> list[dict[str, Any]]:
             return [metadata]
 
-    import media_sorter.utils.exif
+    import exif_sorter.utils.exif
     monkeypatch.setattr(
-        media_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
+        exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
     )
 
     return metadata
@@ -140,9 +140,9 @@ def mock_exiftool_no_date(monkeypatch: pytest.MonkeyPatch) -> None:
         def get_metadata(self, file_path: str) -> list[dict[str, Any]]:
             return [{"File:FileType": "JPEG"}]
 
-    import media_sorter.utils.exif
+    import exif_sorter.utils.exif
     monkeypatch.setattr(
-        media_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
+        exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
     )
 
 
@@ -159,9 +159,9 @@ def mock_exiftool_error(monkeypatch: pytest.MonkeyPatch) -> None:
         def get_metadata(self, file_path: str) -> list[dict[str, Any]]:
             raise RuntimeError("ExifTool error")
 
-    import media_sorter.utils.exif
+    import exif_sorter.utils.exif
     monkeypatch.setattr(
-        media_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
+        exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
     )
 
 

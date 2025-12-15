@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from media_sorter.utils.duplicates import (
+from exif_sorter.utils.duplicates import (
     DuplicateFileRemover,
     remove_duplicates_in_directory,
 )

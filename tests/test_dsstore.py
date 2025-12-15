@@ -6,7 +6,7 @@ from pathlib import Path
 
 import pytest
 
-from media_sorter.utils.dsstore import (
+from exif_sorter.utils.dsstore import (
     find_ds_store_files,
     remove_ds_store_file,
     remove_ds_store_files,
@@ -213,8 +213,8 @@ class TestRemoveDSStoreFiles:
             if ".DS_Store" in str(path):
                 raise PermissionError("Permission denied")
 
-        import media_sorter.utils.dsstore
-        monkeypatch.setattr(media_sorter.utils.dsstore, "remove", mock_remove)
+        import exif_sorter.utils.dsstore
+        monkeypatch.setattr(exif_sorter.utils.dsstore, "remove", mock_remove)
 
         results = remove_ds_store_files(str(temp_source_dir), verbose=False)
 

@@ -10,8 +10,8 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from media_sorter import __version__
-from media_sorter.cli import (
+from exif_sorter import __version__
+from exif_sorter.cli import (
     cmd_clean,
     cmd_dedup,
     cmd_sort,
@@ -144,7 +144,7 @@ class TestCmdSort:
 
         # Mock the sorter
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             cmd_sort(args)
 
         assert mock_sorter.move_files is False
@@ -175,7 +175,7 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             cmd_sort(args)
 
         assert mock_sorter.move_files is True
@@ -205,7 +205,7 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             with pytest.raises(SystemExit):
                 cmd_sort(args)
 
@@ -233,7 +233,7 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             cmd_sort(args)
 
         mock_sorter.sort.assert_called_once()
@@ -259,7 +259,7 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             cmd_sort(args)
 
         assert mock_sorter.dry_run is True
@@ -286,7 +286,7 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             cmd_sort(args)
 
         assert mock_sorter.from_date == date(2023, 12, 1)
@@ -313,7 +313,7 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("media_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
             cmd_sort(args)
 
         assert mock_sorter.date_format == "%Y/%m/%d"
@@ -327,7 +327,7 @@ class TestCmdClean:
         """Test clean command."""
         args = argparse.Namespace(directory=str(temp_source_dir))
 
-        with patch("media_sorter.utils.dsstore.remove_ds_store_files") as mock_remove:
+        with patch("exif_sorter.utils.dsstore.remove_ds_store_files") as mock_remove:
             cmd_clean(args)
 
         mock_remove.assert_called_once_with(str(temp_source_dir), verbose=True)
@@ -348,7 +348,7 @@ class TestCmdDedup:
         )
 
         with patch(
-            "media_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=5
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=5
         ) as mock_dedup:
             cmd_dedup(args)
 
@@ -368,7 +368,7 @@ class TestCmdDedup:
         )
 
         with patch(
-            "media_sorter.utils.duplicates.remove_duplicates_in_directory"
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory"
         ) as mock_dedup:
             with pytest.raises(SystemExit):
                 cmd_dedup(args)
@@ -385,7 +385,7 @@ class TestCmdDedup:
         )
 
         with patch(
-            "media_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=3
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=3
         ) as mock_dedup:
             cmd_dedup(args)
 
@@ -401,7 +401,7 @@ class TestCmdDedup:
         )
 
         with patch(
-            "media_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=2
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=2
         ) as mock_dedup:
             cmd_dedup(args)
 
@@ -415,7 +415,7 @@ class TestMainCLI:
 
     def test_main_version(self, capsys):
         """Test --version flag."""
-        with patch.object(sys, "argv", ["media-sorter", "--version"]):
+        with patch.object(sys, "argv", ["exif-sorter", "--version"]):
             with pytest.raises(SystemExit) as exc_info:
                 main()
 
@@ -425,7 +425,7 @@ class TestMainCLI:
 
     def test_main_no_command(self):
         """Test running without a command shows error."""
-        with patch.object(sys, "argv", ["media-sorter"]):
+        with patch.object(sys, "argv", ["exif-sorter"]):
             with pytest.raises(SystemExit) as exc_info:
                 main()
 
@@ -439,7 +439,7 @@ class TestMainCLI:
             sys,
             "argv",
             [
-                "media-sorter",
+                "exif-sorter",
                 "sort",
                 str(temp_source_dir),
                 str(temp_dest_dir),
@@ -447,7 +447,7 @@ class TestMainCLI:
                 "--dry-run",
             ],
         ):
-            with patch("media_sorter.sorter.MediaFileSorter") as mock_sorter_class:
+            with patch("exif_sorter.sorter.MediaFileSorter") as mock_sorter_class:
                 mock_sorter = MagicMock()
                 mock_sorter_class.return_value = mock_sorter
                 main()
@@ -457,9 +457,9 @@ class TestMainCLI:
     def test_main_clean_command(self, temp_source_dir: Path):
         """Test running clean command."""
         with patch.object(
-            sys, "argv", ["media-sorter", "clean", str(temp_source_dir)]
+            sys, "argv", ["exif-sorter", "clean", str(temp_source_dir)]
         ):
-            with patch("media_sorter.utils.dsstore.remove_ds_store_files") as mock_clean:
+            with patch("exif_sorter.utils.dsstore.remove_ds_store_files") as mock_clean:
                 main()
 
         mock_clean.assert_called_once()
@@ -469,10 +469,10 @@ class TestMainCLI:
         with patch.object(
             sys,
             "argv",
-            ["media-sorter", "dedup", str(temp_source_dir), "--dry-run"],
+            ["exif-sorter", "dedup", str(temp_source_dir), "--dry-run"],
         ):
             with patch(
-                "media_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=0
+                "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=0
             ) as mock_dedup:
                 main()
 
@@ -486,7 +486,7 @@ class TestMainCLI:
             sys,
             "argv",
             [
-                "media-sorter",
+                "exif-sorter",
                 "sort",
                 str(temp_source_dir),
                 str(temp_dest_dir),
@@ -505,7 +505,7 @@ class TestMainCLI:
                 "--yes",
             ],
         ):
-            with patch("media_sorter.sorter.MediaFileSorter") as mock_sorter_class:
+            with patch("exif_sorter.sorter.MediaFileSorter") as mock_sorter_class:
                 mock_sorter = MagicMock()
                 mock_sorter_class.return_value = mock_sorter
                 main()
@@ -522,7 +522,7 @@ class TestMainCLI:
             sys,
             "argv",
             [
-                "media-sorter",
+                "exif-sorter",
                 "sort",
                 "/source",
                 "/dest",
@@ -541,7 +541,7 @@ class TestMainCLI:
             sys,
             "argv",
             [
-                "media-sorter",
+                "exif-sorter",
                 "sort",
                 "/source",
                 "/dest",

@@ -40,4 +40,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - imohash (fast file hashing via sampling)
 - tqdm (progress bars and concurrent processing)
 
-[1.0.0]: https://github.com/davidamacey/media-sorter/releases/tag/v1.0.0
+[1.0.0]: https://github.com/davidamacey/exif-sorter/releases/tag/v1.0.0

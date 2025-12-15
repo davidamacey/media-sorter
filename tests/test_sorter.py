@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from media_sorter.sorter import MediaFileSorter, check_exiftool
+from exif_sorter.sorter import MediaFileSorter, check_exiftool
 
 
 class TestCheckExiftool:
@@ -89,8 +89,8 @@ class TestMediaFileSorterInit:
         def mock_access(path, mode):
             return False
 
-        import media_sorter.sorter
-        monkeypatch.setattr(media_sorter.sorter, "access", mock_access)
+        import exif_sorter.sorter
+        monkeypatch.setattr(exif_sorter.sorter, "access", mock_access)
 
         with pytest.raises(PermissionError, match="not writable"):
             MediaFileSorter(str(temp_source_dir), str(temp_dest_dir))
@@ -428,9 +428,9 @@ class TestMediaFileSorterFileOperations:
         def mock_get_media_date(file_path: str, use_filename_fallback: bool = True):
             raise RuntimeError("Simulated processing error")
 
-        import media_sorter.sorter
+        import exif_sorter.sorter
         monkeypatch.setattr(
-            media_sorter.sorter, "get_media_date", mock_get_media_date
+            exif_sorter.sorter, "get_media_date", mock_get_media_date
         )
 
         sorter = MediaFileSorter(str(temp_source_dir), str(temp_dest_dir))
