@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Media File Sorter - A Python package for organizing photos, videos, and audio files based on EXIF/ID3 metadata creation dates. Designed for managing large media collections (tested with 18,000+ files, ~175GB).
+EXIF Sorter - A Python package for organizing photos, videos, and audio files based on EXIF/ID3 metadata creation dates. Designed for managing large media collections (tested with 18,000+ files, ~175GB).
 
 ## Prerequisites
 
@@ -21,25 +21,25 @@ pip install -e .
 
 ```bash
 # Sort media files by date - MOVES files by default
-media-sorter sort <source_dir> <dest_dir>
+exif-sorter sort <source_dir> <dest_dir>
 
 # Advanced sorting options
-media-sorter sort <src> <dest> --format "%Y/%m"      # Custom folder format
-media-sorter sort <src> <dest> --day-begins 4        # 2am photos → previous day
-media-sorter sort <src> <dest> --from-date 2023-01-01 --to-date 2023-12-31
-media-sorter sort <src> <dest> --copy                # Copy instead of move
-media-sorter sort <src> <dest> --dry-run             # Preview only
+exif-sorter sort <src> <dest> --format "%Y/%m"      # Custom folder format
+exif-sorter sort <src> <dest> --day-begins 4        # 2am photos → previous day
+exif-sorter sort <src> <dest> --from-date 2023-01-01 --to-date 2023-12-31
+exif-sorter sort <src> <dest> --copy                # Copy instead of move
+exif-sorter sort <src> <dest> --dry-run             # Preview only
 
 # Remove .DS_Store files
-media-sorter clean <directory>
+exif-sorter clean <directory>
 
 # Remove duplicate files (uses imohash)
-media-sorter dedup <directory> [--dry-run]
+exif-sorter dedup <directory> [--dry-run]
 ```
 
 ## Architecture
 
-### Package Structure (`src/media_sorter/`)
+### Package Structure (`src/exif_sorter/`)
 
 - **cli.py**: CLI entry point with subcommands (`sort`, `clean`, `dedup`)
 - **sorter.py**: `MediaFileSorter` class - main sorting logic
@@ -76,6 +76,6 @@ media-sorter dedup <directory> [--dry-run]
 
 ### Folder Structure
 
-- `src/media_sorter/` - Main package code
+- `src/exif_sorter/` - Main package code
 - `pyproject.toml` - Package configuration
 - `CHANGELOG.md` - Version history

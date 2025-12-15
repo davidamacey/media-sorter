@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "media-sorter"
+name = "exif-sorter"
 version = "1.0.0"
 description = "Organize photos, videos, and audio files by EXIF/ID3 creation date"
 readme = "README.md"
@@ -31,7 +31,7 @@ dependencies = [
 ]
 
 [project.scripts]
-media-sorter = "media_sorter.cli:main"
+exif-sorter = "exif_sorter.cli:main"
 
 [project.optional-dependencies]
 dev = [
@@ -45,11 +45,11 @@ dev = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/davidamacey/media-sorter"
-Documentation = "https://github.com/davidamacey/media-sorter#readme"
-Repository = "https://github.com/davidamacey/media-sorter"
-Changelog = "https://github.com/davidamacey/media-sorter/blob/main/CHANGELOG.md"
-Issues = "https://github.com/davidamacey/media-sorter/issues"
+Homepage = "https://github.com/davidamacey/exif-sorter"
+Documentation = "https://github.com/davidamacey/exif-sorter#readme"
+Repository = "https://github.com/davidamacey/exif-sorter"
+Changelog = "https://github.com/davidamacey/exif-sorter/blob/main/CHANGELOG.md"
+Issues = "https://github.com/davidamacey/exif-sorter/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

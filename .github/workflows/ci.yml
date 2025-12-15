@@ -36,6 +36,6 @@ jobs:
       - name: Install package
         run: pip install -e .[dev]
       - name: Run tests with coverage
-        run: pytest tests/ -v --tb=short --cov=media_sorter --cov-report=term-missing
+        run: pytest tests/ -v --tb=short --cov=exif_sorter --cov-report=term-missing
       - name: Type check with mypy
-        run: mypy src/media_sorter/ --ignore-missing-imports
+        run: mypy src/exif_sorter/ --ignore-missing-imports

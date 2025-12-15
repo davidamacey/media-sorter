@@ -1,6 +1,6 @@
-# Media Sorter Test Suite
+# EXIF Sorter Test Suite
 
-Comprehensive pytest test suite for the media-sorter package with 153 passing tests.
+Comprehensive pytest test suite for the exif-sorter package with 153 passing tests.
 
 ## Test Structure
 
@@ -39,7 +39,7 @@ pytest tests/test_exif.py::TestParseDatetimeFromString::test_parse_standard_exif
 
 ### Run with coverage
 ```bash
-pytest tests/ --cov=media_sorter --cov-report=html
+pytest tests/ --cov=exif_sorter --cov-report=html
 ```
 
 ## Test Coverage
@@ -152,7 +152,7 @@ def test_example(temp_source_dir, temp_dest_dir):
 ### Testing CLI commands
 ```python
 def test_example(monkeypatch):
-    with patch.object(sys, "argv", ["media-sorter", "sort", "source", "dest"]):
+    with patch.object(sys, "argv", ["exif-sorter", "sort", "source", "dest"]):
         main()
 ```
 

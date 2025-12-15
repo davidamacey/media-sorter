@@ -1,7 +1,7 @@
-# Media File Sorter
+# EXIF Sorter
 
-[![PyPI version](https://badge.fury.io/py/media-sorter.svg)](https://badge.fury.io/py/media-sorter)
-[![Python Version](https://img.shields.io/pypi/pyversions/media-sorter.svg)](https://pypi.org/project/media-sorter/)
+[![PyPI version](https://badge.fury.io/py/exif-sorter.svg)](https://badge.fury.io/py/exif-sorter)
+[![Python Version](https://img.shields.io/pypi/pyversions/exif-sorter.svg)](https://pypi.org/project/exif-sorter/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 Organize photos, videos, and audio recordings into date-based folders using EXIF/QuickTime/ID3 metadata. Designed for managing large media collections efficiently using concurrent processing.
@@ -41,17 +41,17 @@ scoop install exiftool
 
 ```bash
 # Install from PyPI
-pip install media-sorter
+pip install exif-sorter
 
 # Or clone and install in development mode
-git clone <repo-url>
-cd organize_photos
+git clone https://github.com/davidamacey/exif-sorter.git
+cd exif-sorter
 pip install -e .
 ```
 
 ## Usage
 
-After installation, the `media-sorter` command is available with three subcommands:
+After installation, the `exif-sorter` command is available with three subcommands:
 
 ### Sort Media Files
 
@@ -59,28 +59,28 @@ Organize media into date-based folders by reading EXIF metadata:
 
 ```bash
 # Basic usage - sort and MOVE files (default)
-media-sorter sort /path/to/unsorted/ /path/to/sorted/
+exif-sorter sort /path/to/unsorted/ /path/to/sorted/
 
 # Copy instead of move (keeps originals)
-media-sorter sort /path/to/unsorted/ /path/to/sorted/ --copy
+exif-sorter sort /path/to/unsorted/ /path/to/sorted/ --copy
 
 # Dry run - preview without changes
-media-sorter sort /path/to/unsorted/ /path/to/sorted/ --dry-run
+exif-sorter sort /path/to/unsorted/ /path/to/sorted/ --dry-run
 ```
 
 **Advanced options:**
 
 ```bash
 # Custom folder format (default: %Y-%m-%d)
-media-sorter sort /source/ /dest/ --format "%Y/%m"        # 2023/12/
-media-sorter sort /source/ /dest/ --format "%Y/%B"        # 2023/December/
-media-sorter sort /source/ /dest/ --format "%Y-%m-%d"     # 2023-12-25 (default)
+exif-sorter sort /source/ /dest/ --format "%Y/%m"        # 2023/12/
+exif-sorter sort /source/ /dest/ --format "%Y/%B"        # 2023/December/
+exif-sorter sort /source/ /dest/ --format "%Y-%m-%d"     # 2023-12-25 (default)
 
 # Day begins at 4am (2am photos go to previous day - useful for events)
-media-sorter sort /source/ /dest/ --day-begins 4
+exif-sorter sort /source/ /dest/ --day-begins 4
 
 # Filter by date range
-media-sorter sort /source/ /dest/ --from-date 2023-01-01 --to-date 2023-12-31
+exif-sorter sort /source/ /dest/ --from-date 2023-01-01 --to-date 2023-12-31
 ```
 
 **Default behavior:**
@@ -97,10 +97,10 @@ Find and remove duplicates within each subdirectory using fast `imohash`:
 
 ```bash
 # Remove duplicates (keeps file with shortest name)
-media-sorter dedup /path/to/sorted/
+exif-sorter dedup /path/to/sorted/
 
 # Dry run - see what would be removed
-media-sorter dedup /path/to/sorted/ --dry-run
+exif-sorter dedup /path/to/sorted/ --dry-run
 ```
 
 ### Clean .DS_Store Files
@@ -108,7 +108,7 @@ media-sorter dedup /path/to/sorted/ --dry-run
 Remove macOS `.DS_Store` files from a directory tree:
 
 ```bash
-media-sorter clean /path/to/directory/
+exif-sorter clean /path/to/directory/
 ```
 
 ## Workflow
@@ -117,13 +117,13 @@ Typical workflow for importing photos from iPhone or camera:
 
 ```bash
 # 1. Sort imported media by date
-media-sorter sort ~/import/ ~/Pictures/
+exif-sorter sort ~/import/ ~/Pictures/
 
 # 2. Clean up macOS artifacts
-media-sorter clean ~/Pictures/
+exif-sorter clean ~/Pictures/
 
 # 3. Remove any duplicates within date folders
-media-sorter dedup ~/Pictures/
+exif-sorter dedup ~/Pictures/
 ```
 
 ## iPhone Import Instructions
@@ -181,8 +181,8 @@ For most photo/video organization workflows where duplicates are exact copies, i
 ## Project Structure
 
 ```
-media-sorter/
-├── src/media_sorter/     # Main package
+exif-sorter/
+├── src/exif_sorter/      # Main package
 │   ├── cli.py            # CLI entry point
 │   ├── sorter.py         # MediaFileSorter class
 │   └── utils/            # Utility modules

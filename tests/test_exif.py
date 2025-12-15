@@ -7,7 +7,7 @@ from pathlib import Path
 
 import pytest
 
-from media_sorter.utils.exif import (
+from exif_sorter.utils.exif import (
     extract_date_from_filename,
     get_media_date,
     parse_datetime_from_string,
@@ -215,9 +215,9 @@ class TestGetMediaDate:
             def get_metadata(self, file_path: str):
                 return [{"EXIF:DateTimeOriginal": "2024:01:01 10:00:00"}]
 
-        import media_sorter.utils.exif
+        import exif_sorter.utils.exif
         monkeypatch.setattr(
-            media_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
+            exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
         )
 
         result = get_media_date(str(sample_image_file))
@@ -244,9 +244,9 @@ class TestGetMediaDate:
                     }
                 ]
 
-        import media_sorter.utils.exif
+        import exif_sorter.utils.exif
         monkeypatch.setattr(
-            media_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
+            exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
         )
 
         result = get_media_date(str(aae_file))
