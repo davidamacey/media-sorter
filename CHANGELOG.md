@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2025-12-14
+
+### Fixed
+
+- **Dry-run mode**: No longer creates `00_no_date_found` and `00_media_error` folders when using `--dry-run`
+- **Log file naming**: Changed default log filename from `sort_YYYY-MM-DD.log` to `sort_YYYY-MM-DD_HHMMSS.log` to prevent overwrites on multiple runs
+
 ## [1.0.0] - 2025-12-14
 
 ### Added
@@ -40,4 +47,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - imohash (fast file hashing via sampling)
 - tqdm (progress bars and concurrent processing)
 
+[1.0.1]: https://github.com/davidamacey/exif-sorter/releases/tag/v1.0.1
 [1.0.0]: https://github.com/davidamacey/exif-sorter/releases/tag/v1.0.0
