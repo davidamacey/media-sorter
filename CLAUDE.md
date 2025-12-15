@@ -72,7 +72,7 @@ exif-sorter dedup <directory> [--dry-run]
 - Files without dates go to `00_no_date_found/`
 - Files that error go to `00_media_error/`
 - Duplicate filenames handled with `_1`, `_2` suffixes
-- Log files auto-generated: `sort_YYYY-MM-DD.log`, `dedup.log`
+- Log files auto-generated: `sort_YYYY-MM-DD_HHMMSS.log`, `dedup.log`
 
 ### Folder Structure
 

@@ -131,8 +131,8 @@ def main() -> None:
     sort_parser.add_argument(
         "--log-file",
         "-l",
-        default=f"sort_{datetime.now().strftime('%Y-%m-%d')}.log",
-        help="Log file path (default: sort_YYYY-MM-DD.log)",
+        default=f"sort_{datetime.now().strftime('%Y-%m-%d_%H%M%S')}.log",
+        help="Log file path (default: sort_YYYY-MM-DD_HHMMSS.log)",
     )
     sort_parser.add_argument(
         "--copy",

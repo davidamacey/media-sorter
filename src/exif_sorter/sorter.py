@@ -96,11 +96,14 @@ class MediaFileSorter:
 
     def create_destination_folders(self) -> None:
         """Create destination and special folders for edge cases."""
-        makedirs(self.dest_dir, exist_ok=True)
         self.no_date_folder = path.join(self.dest_dir, "00_no_date_found")
-        makedirs(self.no_date_folder, exist_ok=True)
         self.error_folder = path.join(self.dest_dir, "00_media_error")
-        makedirs(self.error_folder, exist_ok=True)
+
+        # Don't create folders in dry-run mode
+        if not self.dry_run:
+            makedirs(self.dest_dir, exist_ok=True)
+            makedirs(self.no_date_folder, exist_ok=True)
+            makedirs(self.error_folder, exist_ok=True)
 
     def _apply_day_begins(self, dt: datetime) -> datetime:
         """Adjust datetime based on day_begins hour.
