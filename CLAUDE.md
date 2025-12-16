@@ -97,11 +97,39 @@ docker run --rm davidamacey/exif-sorter --help
 
 ### CI/CD
 
-GitHub Actions workflow:
+GitHub Actions workflow triggers:
+- **Push to main / PR**: Runs lint and test only
+- **Push tag (v*)**: Runs lint, test, publish to PyPI, build Docker
+
+Jobs:
 1. **lint**: Runs ruff on source code
 2. **test**: Runs pytest on Python 3.11, 3.12, 3.13
-3. **docker**: Builds and pushes multi-arch image (amd64/arm64) to DockerHub
+3. **publish**: Builds and publishes to PyPI (tag only)
+4. **docker**: Builds and pushes multi-arch image to DockerHub (tag only)
 
-Docker push requires repository secrets:
+Required repository secrets:
+- `PYPI_API_TOKEN`: PyPI API token for publishing
 - `DOCKERHUB_USERNAME`: DockerHub username
 - `DOCKERHUB_TOKEN`: DockerHub access token
+
+### Release Process
+
+```bash
+# 1. Update version in pyproject.toml and src/exif_sorter/__init__.py
+# 2. Update CHANGELOG.md
+# 3. Commit changes
+git add -A && git commit -m "Release vX.Y.Z"
+
+# 4. Create and push tag (triggers full release pipeline)
+git tag -a vX.Y.Z -m "Release vX.Y.Z"
+git push && git push origin vX.Y.Z
+
+# 5. Create GitHub release
+gh release create vX.Y.Z --title "vX.Y.Z" --notes "Release notes here"
+```
+
+The pipeline automatically:
+- Verifies tag version matches pyproject.toml
+- Publishes to PyPI
+- Waits for PyPI propagation
+- Builds and pushes Docker image with correct version
