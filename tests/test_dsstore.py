@@ -204,7 +204,9 @@ class TestRemoveDSStoreFiles:
         assert not ds3.exists()
         assert not ds4.exists()
 
-    def test_remove_with_permission_error(self, temp_source_dir: Path, monkeypatch):
+    def test_remove_with_permission_error(
+        self, temp_source_dir: Path, monkeypatch
+    ):
         """Test handling permission errors when removing files."""
         ds_store = temp_source_dir / ".DS_Store"
         ds_store.write_text("content")
@@ -214,6 +216,7 @@ class TestRemoveDSStoreFiles:
                 raise PermissionError("Permission denied")
 
         import exif_sorter.utils.dsstore
+
         monkeypatch.setattr(exif_sorter.utils.dsstore, "remove", mock_remove)
 
         results = remove_ds_store_files(str(temp_source_dir), verbose=False)

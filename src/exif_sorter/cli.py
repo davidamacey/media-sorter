@@ -1,4 +1,4 @@
-"""Command-line interface for media-sorter."""
+"""Command-line interface for exif-sorter."""
 
 from __future__ import annotations
 
@@ -108,9 +108,9 @@ def cmd_dedup(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    """Main entry point for media-sorter CLI."""
+    """Main entry point for exif-sorter CLI."""
     parser = argparse.ArgumentParser(
-        prog="media-sorter",
+        prog="exif-sorter",
         description="Organize photos and videos by EXIF creation date",
     )
     parser.add_argument(

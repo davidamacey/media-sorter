@@ -4,13 +4,13 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "exif-sorter"
-version = "1.0.1"
+version = "1.1.0"
 description = "Organize photos, videos, and audio files by EXIF/ID3 creation date"
 readme = "README.md"
 license = "MIT"
 requires-python = ">=3.11"
 authors = [{name = "David A. Macey", email = "davidamacey@gmail.com"}]
-keywords = ["exif", "photos", "organize", "media", "sort", "videos", "images", "audio", "id3", "quicktime"]
+keywords = ["exif", "photos", "organize", "media", "sort", "videos", "images", "audio", "id3", "quicktime", "docker", "exiftool"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Environment :: Console",

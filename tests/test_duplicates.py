@@ -4,8 +4,6 @@ from __future__ import annotations
 
 from pathlib import Path
 
-import pytest
-
 from exif_sorter.utils.duplicates import (
     DuplicateFileRemover,
     remove_duplicates_in_directory,
@@ -53,7 +51,9 @@ class TestDuplicateFileRemover:
 
         assert hash1 != hash2
 
-    def test_hash_file_same_content(self, sample_duplicate_files: tuple[Path, Path]):
+    def test_hash_file_same_content(
+        self, sample_duplicate_files: tuple[Path, Path]
+    ):
         """Test that identical files have same hash."""
         file1, file2 = sample_duplicate_files
 
@@ -351,7 +351,9 @@ class TestRemoveDuplicatesInDirectory:
 
         assert total == 0
 
-    def test_remove_duplicates_preserves_across_subdirs(self, temp_source_dir: Path):
+    def test_remove_duplicates_preserves_across_subdirs(
+        self, temp_source_dir: Path
+    ):
         """Test that duplicates are only removed within subdirectories, not across them."""
         subdir1 = temp_source_dir / "2023-12-25"
         subdir2 = temp_source_dir / "2023-12-26"
@@ -373,7 +375,9 @@ class TestRemoveDuplicatesInDirectory:
         assert file1.exists()
         assert file2.exists()
 
-    def test_remove_duplicates_ignores_files_in_root(self, temp_source_dir: Path):
+    def test_remove_duplicates_ignores_files_in_root(
+        self, temp_source_dir: Path
+    ):
         """Test that files in root directory are ignored."""
         # Files in root
         root_file1 = temp_source_dir / "root1.jpg"
@@ -396,7 +400,9 @@ class TestRemoveDuplicatesInDirectory:
         assert root_file1.exists()
         assert root_file2.exists()
 
-    def test_remove_duplicates_verbose_output(self, temp_source_dir: Path, capsys):
+    def test_remove_duplicates_verbose_output(
+        self, temp_source_dir: Path, capsys
+    ):
         """Test verbose output."""
         subdir = temp_source_dir / "2023-12-25"
         subdir.mkdir()

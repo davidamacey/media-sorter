@@ -1,6 +1,7 @@
 # EXIF Sorter
 
 [![PyPI version](https://img.shields.io/pypi/v/exif-sorter.svg)](https://pypi.org/project/exif-sorter/)
+[![Docker Image](https://img.shields.io/docker/v/davidamacey/exif-sorter?label=docker)](https://hub.docker.com/r/davidamacey/exif-sorter)
 [![Python Version](https://img.shields.io/pypi/pyversions/exif-sorter.svg)](https://pypi.org/project/exif-sorter/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -16,7 +17,38 @@ When I couldn't find an existing package that did this well, I built my own. It 
 
 **Philosophy:** This package is intentionally lean. It serves one function—sorting media by date—and does it well and quickly. No feature creep.
 
-## Installation
+## Quick Start (Docker)
+
+The easiest way to use exif-sorter—no installation required:
+
+```bash
+docker run --rm -v /path/to/unsorted:/input -v /path/to/sorted:/output davidamacey/exif-sorter sort /input /output
+```
+
+**More examples:**
+
+```bash
+# Sort media files (expanded for readability)
+docker run --rm -v /path/to/unsorted:/input -v /path/to/sorted:/output \
+  davidamacey/exif-sorter sort /input /output
+
+# Dry run (preview changes)
+docker run --rm -v /path/to/media:/input -v /path/to/sorted:/output \
+  davidamacey/exif-sorter sort /input /output --dry-run
+
+# Copy instead of move
+docker run --rm -v /path/to/unsorted:/input -v /path/to/sorted:/output \
+  davidamacey/exif-sorter sort /input /output --copy
+
+# Remove duplicates
+docker run --rm -v /path/to/sorted:/data \
+  davidamacey/exif-sorter dedup /data
+
+# Show help
+docker run --rm davidamacey/exif-sorter --help
+```
+
+## Installation (pip)
 
 ### Prerequisites
 
@@ -113,7 +145,23 @@ exif-sorter clean /path/to/directory/
 
 ## Workflow
 
-Typical workflow for importing photos from iPhone or camera:
+Typical workflow for importing photos from iPhone or camera.
+
+**Using Docker (recommended):**
+
+```bash
+# 1. Sort imported media by date
+docker run --rm -v ~/import:/input -v ~/Pictures:/output \
+  davidamacey/exif-sorter sort /input /output
+
+# 2. Clean up macOS artifacts
+docker run --rm -v ~/Pictures:/data davidamacey/exif-sorter clean /data
+
+# 3. Remove any duplicates within date folders
+docker run --rm -v ~/Pictures:/data davidamacey/exif-sorter dedup /data
+```
+
+**Using pip:**
 
 ```bash
 # 1. Sort imported media by date
@@ -189,10 +237,18 @@ exif-sorter/
 │       ├── dsstore.py    # DS_Store removal
 │       ├── duplicates.py # Duplicate detection (imohash)
 │       └── exif.py       # EXIF/ID3/RIFF date extraction
+├── Dockerfile            # Docker image definition
 ├── pyproject.toml        # Package configuration
 ├── CHANGELOG.md          # Version history
 └── README.md             # This file
 ```
+
+## Acknowledgments
+
+This project is built on [ExifTool](https://exiftool.org/) by Phil Harvey—the gold standard for reading and writing metadata in media files. ExifTool's comprehensive support for EXIF, IPTC, XMP, QuickTime, ID3, and hundreds of other metadata formats makes this package possible.
+
+- **ExifTool**: https://exiftool.org/
+- **PyExifTool**: Python wrapper used by this package
 
 ## License
 

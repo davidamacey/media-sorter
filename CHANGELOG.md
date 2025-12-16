@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2025-12-15
+
+### Added
+
+- **Docker support**: Official Docker image for portable, zero-install usage
+  - Available at `davidamacey/exif-sorter` on Docker Hub
+  - Multi-architecture support (amd64, arm64)
+  - Based on Python 3.13 Alpine for minimal image size (~116MB)
+- **CI/CD pipeline**: Automated Docker image builds and publishing
+  - Builds on every push to main after tests pass
+  - Automatic version tagging from pyproject.toml
+
+### Changed
+
+- README restructured with Docker as primary quick-start option
+- Added Acknowledgments section crediting ExifTool
+
+### Fixed
+
+- CLI now correctly shows `exif-sorter` instead of legacy `media-sorter` in help/version
+
 ## [1.0.1] - 2025-12-14
 
 ### Fixed
@@ -47,5 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - imohash (fast file hashing via sampling)
 - tqdm (progress bars and concurrent processing)
 
+[1.1.0]: https://github.com/davidamacey/exif-sorter/releases/tag/v1.1.0
 [1.0.1]: https://github.com/davidamacey/exif-sorter/releases/tag/v1.0.1
 [1.0.0]: https://github.com/davidamacey/exif-sorter/releases/tag/v1.0.0

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import subprocess
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -81,12 +80,10 @@ def sample_files_with_dates(temp_source_dir: Path) -> list[Path]:
 @pytest.fixture
 def mock_exiftool_success(monkeypatch: pytest.MonkeyPatch) -> None:
     """Mock successful exiftool execution."""
+
     def mock_run(*args: Any, **kwargs: Any) -> subprocess.CompletedProcess:
         return subprocess.CompletedProcess(
-            args=args[0],
-            returncode=0,
-            stdout="12.50",
-            stderr=""
+            args=args[0], returncode=0, stdout="12.50", stderr=""
         )
 
     monkeypatch.setattr(subprocess, "run", mock_run)
@@ -95,6 +92,7 @@ def mock_exiftool_success(monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.fixture
 def mock_exiftool_not_found(monkeypatch: pytest.MonkeyPatch) -> None:
     """Mock exiftool not found."""
+
     def mock_run(*args: Any, **kwargs: Any) -> None:
         raise FileNotFoundError("exiftool not found")
 
@@ -120,6 +118,7 @@ def mock_exiftool_metadata(monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
             return [metadata]
 
     import exif_sorter.utils.exif
+
     monkeypatch.setattr(
         exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
     )
@@ -130,6 +129,7 @@ def mock_exiftool_metadata(monkeypatch: pytest.MonkeyPatch) -> dict[str, Any]:
 @pytest.fixture
 def mock_exiftool_no_date(monkeypatch: pytest.MonkeyPatch) -> None:
     """Mock ExifToolHelper to return metadata without date."""
+
     class MockExifToolHelper:
         def __enter__(self):
             return self
@@ -141,6 +141,7 @@ def mock_exiftool_no_date(monkeypatch: pytest.MonkeyPatch) -> None:
             return [{"File:FileType": "JPEG"}]
 
     import exif_sorter.utils.exif
+
     monkeypatch.setattr(
         exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
     )
@@ -149,6 +150,7 @@ def mock_exiftool_no_date(monkeypatch: pytest.MonkeyPatch) -> None:
 @pytest.fixture
 def mock_exiftool_error(monkeypatch: pytest.MonkeyPatch) -> None:
     """Mock ExifToolHelper to raise an error."""
+
     class MockExifToolHelper:
         def __enter__(self):
             return self
@@ -160,6 +162,7 @@ def mock_exiftool_error(monkeypatch: pytest.MonkeyPatch) -> None:
             raise RuntimeError("ExifTool error")
 
     import exif_sorter.utils.exif
+
     monkeypatch.setattr(
         exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
     )

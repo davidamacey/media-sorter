@@ -103,6 +103,7 @@ class TestConfirmAction:
 
     def test_confirm_eof(self, monkeypatch):
         """Test confirmation handles EOF."""
+
         def raise_eof(_):
             raise EOFError
 
@@ -111,6 +112,7 @@ class TestConfirmAction:
 
     def test_confirm_keyboard_interrupt(self, monkeypatch):
         """Test confirmation handles keyboard interrupt."""
+
         def raise_interrupt(_):
             raise KeyboardInterrupt
 
@@ -144,7 +146,9 @@ class TestCmdSort:
 
         # Mock the sorter
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch(
+            "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+        ):
             cmd_sort(args)
 
         assert mock_sorter.move_files is False
@@ -175,7 +179,9 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch(
+            "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+        ):
             cmd_sort(args)
 
         assert mock_sorter.move_files is True
@@ -205,9 +211,13 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
-            with pytest.raises(SystemExit):
-                cmd_sort(args)
+        with (
+            patch(
+                "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+            ),
+            pytest.raises(SystemExit),
+        ):
+            cmd_sort(args)
 
         # Sorter should not be called
         mock_sorter.sort.assert_not_called()
@@ -233,7 +243,9 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch(
+            "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+        ):
             cmd_sort(args)
 
         mock_sorter.sort.assert_called_once()
@@ -259,7 +271,9 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch(
+            "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+        ):
             cmd_sort(args)
 
         assert mock_sorter.dry_run is True
@@ -286,7 +300,9 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch(
+            "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+        ):
             cmd_sort(args)
 
         assert mock_sorter.from_date == date(2023, 12, 1)
@@ -313,7 +329,9 @@ class TestCmdSort:
         )
 
         mock_sorter = MagicMock()
-        with patch("exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter):
+        with patch(
+            "exif_sorter.sorter.MediaFileSorter", return_value=mock_sorter
+        ):
             cmd_sort(args)
 
         assert mock_sorter.date_format == "%Y/%m/%d"
@@ -327,7 +345,9 @@ class TestCmdClean:
         """Test clean command."""
         args = argparse.Namespace(directory=str(temp_source_dir))
 
-        with patch("exif_sorter.utils.dsstore.remove_ds_store_files") as mock_remove:
+        with patch(
+            "exif_sorter.utils.dsstore.remove_ds_store_files"
+        ) as mock_remove:
             cmd_clean(args)
 
         mock_remove.assert_called_once_with(str(temp_source_dir), verbose=True)
@@ -348,7 +368,8 @@ class TestCmdDedup:
         )
 
         with patch(
-            "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=5
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory",
+            return_value=5,
         ) as mock_dedup:
             cmd_dedup(args)
 
@@ -367,11 +388,13 @@ class TestCmdDedup:
             yes=False,
         )
 
-        with patch(
-            "exif_sorter.utils.duplicates.remove_duplicates_in_directory"
-        ) as mock_dedup:
-            with pytest.raises(SystemExit):
-                cmd_dedup(args)
+        with (
+            patch(
+                "exif_sorter.utils.duplicates.remove_duplicates_in_directory"
+            ) as mock_dedup,
+            pytest.raises(SystemExit),
+        ):
+            cmd_dedup(args)
 
         mock_dedup.assert_not_called()
 
@@ -385,7 +408,8 @@ class TestCmdDedup:
         )
 
         with patch(
-            "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=3
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory",
+            return_value=3,
         ) as mock_dedup:
             cmd_dedup(args)
 
@@ -401,7 +425,8 @@ class TestCmdDedup:
         )
 
         with patch(
-            "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=2
+            "exif_sorter.utils.duplicates.remove_duplicates_in_directory",
+            return_value=2,
         ) as mock_dedup:
             cmd_dedup(args)
 
@@ -415,9 +440,11 @@ class TestMainCLI:
 
     def test_main_version(self, capsys):
         """Test --version flag."""
-        with patch.object(sys, "argv", ["exif-sorter", "--version"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+        with (
+            patch.object(sys, "argv", ["exif-sorter", "--version"]),
+            pytest.raises(SystemExit) as exc_info,
+        ):
+            main()
 
         assert exc_info.value.code == 0
         captured = capsys.readouterr()
@@ -425,9 +452,11 @@ class TestMainCLI:
 
     def test_main_no_command(self):
         """Test running without a command shows error."""
-        with patch.object(sys, "argv", ["exif-sorter"]):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+        with (
+            patch.object(sys, "argv", ["exif-sorter"]),
+            pytest.raises(SystemExit) as exc_info,
+        ):
+            main()
 
         assert exc_info.value.code != 0
 
@@ -435,46 +464,55 @@ class TestMainCLI:
         self, temp_source_dir: Path, temp_dest_dir: Path, mock_exiftool_success
     ):
         """Test running sort command."""
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "exif-sorter",
-                "sort",
-                str(temp_source_dir),
-                str(temp_dest_dir),
-                "--copy",
-                "--dry-run",
-            ],
+        with (
+            patch.object(
+                sys,
+                "argv",
+                [
+                    "exif-sorter",
+                    "sort",
+                    str(temp_source_dir),
+                    str(temp_dest_dir),
+                    "--copy",
+                    "--dry-run",
+                ],
+            ),
+            patch("exif_sorter.sorter.MediaFileSorter") as mock_sorter_class,
         ):
-            with patch("exif_sorter.sorter.MediaFileSorter") as mock_sorter_class:
-                mock_sorter = MagicMock()
-                mock_sorter_class.return_value = mock_sorter
-                main()
+            mock_sorter = MagicMock()
+            mock_sorter_class.return_value = mock_sorter
+            main()
 
         mock_sorter.sort.assert_called_once()
 
     def test_main_clean_command(self, temp_source_dir: Path):
         """Test running clean command."""
-        with patch.object(
-            sys, "argv", ["exif-sorter", "clean", str(temp_source_dir)]
+        with (
+            patch.object(
+                sys, "argv", ["exif-sorter", "clean", str(temp_source_dir)]
+            ),
+            patch(
+                "exif_sorter.utils.dsstore.remove_ds_store_files"
+            ) as mock_clean,
         ):
-            with patch("exif_sorter.utils.dsstore.remove_ds_store_files") as mock_clean:
-                main()
+            main()
 
         mock_clean.assert_called_once()
 
     def test_main_dedup_command(self, temp_source_dir: Path):
         """Test running dedup command."""
-        with patch.object(
-            sys,
-            "argv",
-            ["exif-sorter", "dedup", str(temp_source_dir), "--dry-run"],
+        with (
+            patch.object(
+                sys,
+                "argv",
+                ["exif-sorter", "dedup", str(temp_source_dir), "--dry-run"],
+            ),
+            patch(
+                "exif_sorter.utils.duplicates.remove_duplicates_in_directory",
+                return_value=0,
+            ) as mock_dedup,
         ):
-            with patch(
-                "exif_sorter.utils.duplicates.remove_duplicates_in_directory", return_value=0
-            ) as mock_dedup:
-                main()
+            main()
 
         mock_dedup.assert_called_once()
 
@@ -482,33 +520,35 @@ class TestMainCLI:
         self, temp_source_dir: Path, temp_dest_dir: Path, mock_exiftool_success
     ):
         """Test sort command with all options."""
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "exif-sorter",
-                "sort",
-                str(temp_source_dir),
-                str(temp_dest_dir),
-                "--copy",
-                "--dry-run",
-                "--format",
-                "%Y/%m",
-                "--day-begins",
-                "4",
-                "--from-date",
-                "2023-01-01",
-                "--to-date",
-                "2023-12-31",
-                "--log-file",
-                "custom.log",
-                "--yes",
-            ],
+        with (
+            patch.object(
+                sys,
+                "argv",
+                [
+                    "exif-sorter",
+                    "sort",
+                    str(temp_source_dir),
+                    str(temp_dest_dir),
+                    "--copy",
+                    "--dry-run",
+                    "--format",
+                    "%Y/%m",
+                    "--day-begins",
+                    "4",
+                    "--from-date",
+                    "2023-01-01",
+                    "--to-date",
+                    "2023-12-31",
+                    "--log-file",
+                    "custom.log",
+                    "--yes",
+                ],
+            ),
+            patch("exif_sorter.sorter.MediaFileSorter") as mock_sorter_class,
         ):
-            with patch("exif_sorter.sorter.MediaFileSorter") as mock_sorter_class:
-                mock_sorter = MagicMock()
-                mock_sorter_class.return_value = mock_sorter
-                main()
+            mock_sorter = MagicMock()
+            mock_sorter_class.return_value = mock_sorter
+            main()
 
         mock_sorter_class.assert_called_once()
         assert mock_sorter.date_format == "%Y/%m"
@@ -518,38 +558,42 @@ class TestMainCLI:
 
     def test_main_invalid_date_format(self):
         """Test invalid date format raises error."""
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "exif-sorter",
-                "sort",
-                "/source",
-                "/dest",
-                "--from-date",
-                "invalid",
-            ],
+        with (
+            patch.object(
+                sys,
+                "argv",
+                [
+                    "exif-sorter",
+                    "sort",
+                    "/source",
+                    "/dest",
+                    "--from-date",
+                    "invalid",
+                ],
+            ),
+            pytest.raises(SystemExit) as exc_info,
         ):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+            main()
 
         assert exc_info.value.code != 0
 
     def test_main_invalid_day_begins(self):
         """Test invalid day-begins value raises error."""
-        with patch.object(
-            sys,
-            "argv",
-            [
-                "exif-sorter",
-                "sort",
-                "/source",
-                "/dest",
-                "--day-begins",
-                "25",  # Out of range 0-23
-            ],
+        with (
+            patch.object(
+                sys,
+                "argv",
+                [
+                    "exif-sorter",
+                    "sort",
+                    "/source",
+                    "/dest",
+                    "--day-begins",
+                    "25",  # Out of range 0-23
+                ],
+            ),
+            pytest.raises(SystemExit) as exc_info,
         ):
-            with pytest.raises(SystemExit) as exc_info:
-                main()
+            main()
 
         assert exc_info.value.code != 0

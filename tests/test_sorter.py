@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -51,7 +51,9 @@ class TestMediaFileSorterInit:
         assert sorter.date_format == "%Y-%m-%d"
         assert sorter.day_begins == 0
 
-    def test_init_creates_dest_dir_if_not_exists(self, temp_source_dir: Path, tmp_path: Path):
+    def test_init_creates_dest_dir_if_not_exists(
+        self, temp_source_dir: Path, tmp_path: Path
+    ):
         """Test that destination directory can be created."""
         dest_dir = tmp_path / "new_dest"
         sorter = MediaFileSorter(str(temp_source_dir), str(dest_dir))
@@ -68,15 +70,21 @@ class TestMediaFileSorterInit:
 
     def test_init_source_not_exists(self, temp_dest_dir: Path):
         """Test initialization fails when source doesn't exist."""
-        with pytest.raises(FileNotFoundError, match="Source directory does not exist"):
+        with pytest.raises(
+            FileNotFoundError, match="Source directory does not exist"
+        ):
             MediaFileSorter("/nonexistent/path", str(temp_dest_dir))
 
-    def test_init_source_not_directory(self, temp_dest_dir: Path, tmp_path: Path):
+    def test_init_source_not_directory(
+        self, temp_dest_dir: Path, tmp_path: Path
+    ):
         """Test initialization fails when source is not a directory."""
         file = tmp_path / "file.txt"
         file.write_text("content")
 
-        with pytest.raises(NotADirectoryError, match="Source is not a directory"):
+        with pytest.raises(
+            NotADirectoryError, match="Source is not a directory"
+        ):
             MediaFileSorter(str(file), str(temp_dest_dir))
 
     def test_init_dest_not_writable(
@@ -90,6 +98,7 @@ class TestMediaFileSorterInit:
             return False
 
         import exif_sorter.sorter
+
         monkeypatch.setattr(exif_sorter.sorter, "access", mock_access)
 
         with pytest.raises(PermissionError, match="not writable"):
@@ -164,13 +173,19 @@ class TestMediaFileSorterDateLogic:
         sorter.from_date = date(2023, 12, 20)
 
         # Before from_date
-        assert sorter._is_in_date_range(datetime(2023, 12, 19, 10, 0, 0)) is False
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 19, 10, 0, 0)) is False
+        )
 
         # On from_date
-        assert sorter._is_in_date_range(datetime(2023, 12, 20, 10, 0, 0)) is True
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 20, 10, 0, 0)) is True
+        )
 
         # After from_date
-        assert sorter._is_in_date_range(datetime(2023, 12, 25, 10, 0, 0)) is True
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 25, 10, 0, 0)) is True
+        )
 
     def test_is_in_date_range_to_date(
         self, temp_source_dir: Path, temp_dest_dir: Path
@@ -182,13 +197,19 @@ class TestMediaFileSorterDateLogic:
         sorter.to_date = date(2023, 12, 25)
 
         # Before to_date
-        assert sorter._is_in_date_range(datetime(2023, 12, 20, 10, 0, 0)) is True
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 20, 10, 0, 0)) is True
+        )
 
         # On to_date
-        assert sorter._is_in_date_range(datetime(2023, 12, 25, 10, 0, 0)) is True
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 25, 10, 0, 0)) is True
+        )
 
         # After to_date
-        assert sorter._is_in_date_range(datetime(2023, 12, 26, 10, 0, 0)) is False
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 26, 10, 0, 0)) is False
+        )
 
     def test_is_in_date_range_both(
         self, temp_source_dir: Path, temp_dest_dir: Path
@@ -200,9 +221,15 @@ class TestMediaFileSorterDateLogic:
         sorter.from_date = date(2023, 12, 20)
         sorter.to_date = date(2023, 12, 25)
 
-        assert sorter._is_in_date_range(datetime(2023, 12, 19, 10, 0, 0)) is False
-        assert sorter._is_in_date_range(datetime(2023, 12, 22, 10, 0, 0)) is True
-        assert sorter._is_in_date_range(datetime(2023, 12, 26, 10, 0, 0)) is False
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 19, 10, 0, 0)) is False
+        )
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 22, 10, 0, 0)) is True
+        )
+        assert (
+            sorter._is_in_date_range(datetime(2023, 12, 26, 10, 0, 0)) is False
+        )
 
     def test_get_folder_name_default_format(
         self, temp_source_dir: Path, temp_dest_dir: Path
@@ -424,11 +451,15 @@ class TestMediaFileSorterFileOperations:
         monkeypatch,
     ):
         """Test file that causes processing error goes to error folder."""
+
         # Mock get_media_date to raise an exception (not just return None)
-        def mock_get_media_date(file_path: str, use_filename_fallback: bool = True):
+        def mock_get_media_date(
+            file_path: str, use_filename_fallback: bool = True
+        ):
             raise RuntimeError("Simulated processing error")
 
         import exif_sorter.sorter
+
         monkeypatch.setattr(
             exif_sorter.sorter, "get_media_date", mock_get_media_date
         )

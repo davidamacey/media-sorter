@@ -1,1 +1,1 @@
-"""Test suite for media-sorter package."""
+"""Test suite for exif-sorter package."""

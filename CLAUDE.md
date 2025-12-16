@@ -37,6 +37,19 @@ exif-sorter clean <directory>
 exif-sorter dedup <directory> [--dry-run]
 ```
 
+## Docker Commands
+
+```bash
+# Build image locally
+docker build -t davidamacey/exif-sorter:latest .
+
+# Run with mounted volumes
+docker run --rm -v /input:/input -v /output:/output davidamacey/exif-sorter sort /input /output
+
+# Test the image
+docker run --rm davidamacey/exif-sorter --help
+```
+
 ## Architecture
 
 ### Package Structure (`src/exif_sorter/`)
@@ -77,5 +90,18 @@ exif-sorter dedup <directory> [--dry-run]
 ### Folder Structure
 
 - `src/exif_sorter/` - Main package code
+- `Dockerfile` - Docker image definition (Python 3.13 Alpine + exiftool)
+- `.github/workflows/ci.yml` - CI/CD pipeline (lint, test, Docker build/push)
 - `pyproject.toml` - Package configuration
 - `CHANGELOG.md` - Version history
+
+### CI/CD
+
+GitHub Actions workflow:
+1. **lint**: Runs ruff on source code
+2. **test**: Runs pytest on Python 3.11, 3.12, 3.13
+3. **docker**: Builds and pushes multi-arch image (amd64/arm64) to DockerHub
+
+Docker push requires repository secrets:
+- `DOCKERHUB_USERNAME`: DockerHub username
+- `DOCKERHUB_TOKEN`: DockerHub access token

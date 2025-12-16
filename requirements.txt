@@ -1,4 +1,4 @@
-# Core dependencies for media-sorter
+# Core dependencies for exif-sorter
 # These are the same as pyproject.toml [project.dependencies]
 # Use flexible version ranges for compatibility with other packages
 

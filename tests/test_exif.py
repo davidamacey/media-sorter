@@ -77,10 +77,15 @@ class TestParseDatetimeFromString:
             ("2023:12:25 14:30:22", datetime(2023, 12, 25, 14, 30, 22)),
             ("2023:01:01 00:00:00", datetime(2023, 1, 1, 0, 0, 0)),
             ("2023:12:31 23:59:59", datetime(2023, 12, 31, 23, 59, 59)),
-            ("2020:02:29 12:00:00", datetime(2020, 2, 29, 12, 0, 0)),  # Leap year
+            (
+                "2020:02:29 12:00:00",
+                datetime(2020, 2, 29, 12, 0, 0),
+            ),  # Leap year
         ],
     )
-    def test_parse_various_valid_dates(self, date_str: str, expected: datetime):
+    def test_parse_various_valid_dates(
+        self, date_str: str, expected: datetime
+    ):
         """Test parsing various valid date formats."""
         result = parse_datetime_from_string(date_str)
         assert result == expected
@@ -190,7 +195,9 @@ class TestGetMediaDate:
         self, mock_exiftool_no_date, sample_image_file: Path
     ):
         """Test disabling filename fallback."""
-        result = get_media_date(str(sample_image_file), use_filename_fallback=False)
+        result = get_media_date(
+            str(sample_image_file), use_filename_fallback=False
+        )
         assert result is None
 
     def test_get_date_exiftool_error_uses_fallback(
@@ -204,6 +211,7 @@ class TestGetMediaDate:
         self, monkeypatch, sample_image_file: Path
     ):
         """Test that EXIF date is preferred over filename date."""
+
         # Mock ExifTool to return a different date than filename
         class MockExifToolHelper:
             def __enter__(self):
@@ -216,6 +224,7 @@ class TestGetMediaDate:
                 return [{"EXIF:DateTimeOriginal": "2024:01:01 10:00:00"}]
 
         import exif_sorter.utils.exif
+
         monkeypatch.setattr(
             exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
         )
@@ -245,6 +254,7 @@ class TestGetMediaDate:
                 ]
 
         import exif_sorter.utils.exif
+
         monkeypatch.setattr(
             exif_sorter.utils.exif, "ExifToolHelper", MockExifToolHelper
         )
